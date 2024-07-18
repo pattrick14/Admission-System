@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Merit Form</title>
+    <!-- Link to your CSS file if needed -->
+    <link rel="stylesheet" href="{% static 'test.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="heading">PVG's College of Engineering & Technology & G.K. Pate (Wani) Institute of Management</h1>
+        <h2 class="heading">Merit Form - AY 2024-25</h2>
+        <form method="post" enctype="multipart/form-data" action="{% url 'save_forms' %}">>
+            {% csrf_token %}
+            <fieldset>
+                <legend>Student Details</legend>
+                {{sform.as_p}}  <!-- Render form fields as <p> elements -->
+            </fieldset>
+            <fieldset>
+                <legend>Parent/Guardian Details</legend>
+                {{pform.as_p}}
+            </fieldset>            
+
+            <fieldset>
+                <legend>Document</legend>
+                {{dform.as_p}}
+                {% if file_path %}
+                    <a href="{{ MEDIA_URL }}{{ file_path }}" target="_blank">View Uploaded File</a>
+                {% else %}
+                    No file uploaded.
+                {% endif %}
+            </fieldset>
+
+            <fieldset>
+                <legend>Exam Details</legend>
+                {{eform.as_p}}
+            </fieldset>
+
+            <fieldset>
+                <legend>Merit Details</legend>
+                {{mform.as_p}}
+            </fieldset>
+
+            <fieldset>
+                <legend>Undertaking by Candidates and Parents</legend>
+                <p>
+                    We have read all the Rules of Admission process and after understanding these rules thoroughly, we have filled in the application form for admission for the AY 2023-24. The information given by us in the application is true to the best of our knowledge and belief. We understood that if any of the statements made by us in the application form or any information supplied by us in connection with the candidate's admission is later on at any time, found to be false or incorrect, candidate's admission will be cancelled, fees forfeited, and candidate may be expelled from the Institute by the Director of the Institute.
+                </p><br>
+                <!-- {{aform.as_p}} -->
+                <p>
+                    We are fully aware that if any information mentioned above furnished by us is found INCORRECT due to any reason (intentionally or unintentionally), candidate will have no claim on the seat allotted to him/her in PVG's College of Engineering & Technology and G.K. Pate (Wani) Institute of Management, Pune and that candidate will be completely out of the admission process of ACAP (Spot) Rounds of the Institute.
+                </p><br>
+                {{aform.as_p}}
+            </fieldset>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merit Form</title>
+    <link rel="stylesheet" href="{% static 'test.css' %}"> <!--Link to your CSS file-->
+</head>
+<body>
+    <div class="container">
+        <h1 class="heading">PVG's College of Engineering & Technology & G.K. Pate (Wani) Institute of Management</h1>
+        <h2 class="heading">Merit Form - AY 2024-25</h2>
+        <p>Please enter correct details:</p>
+        <form id="meritForm" method=POST enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Student Details Section -->
+            <fieldset>
+                <legend>Student Details</legend>
+                <div class="form-group">
+                    <label for="studentname">Student's Name (As per HSC Marksheet):</label>
+                    <input type="text" name="studentname" id="studentname" autocapitalize="on" >
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail Address:</label>
+                    <input type="email" name="email" id="email" >
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Mobile Number:</label>
+                    <input type="tel" name="mobile" id="mobile" maxlength="10" >
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" name="address" id="address">
+                </div>
+                <!-- Add other student details here -->
+            </fieldset>
+
+            <!-- Parent/Guardian Details Section -->
+            <fieldset>
+                <legend>Parent/Guardian Details</legend>
+                <div class="form-group">
+                    <label for="pname">Parent/Guardian Name:</label>
+                    <input type="text" name="pname" id="pname">
+                </div>
+                <div class="form-group">
+                    <label for="pnumber">Mobile No.:</label>
+                    <input type="tel" name="pnumber" id="pnumber" maxlength="10">
+                </div>
+                <!-- Add other parent/guardian details here -->
+            </fieldset>
+
+            <!-- Documents Section -->
+            <fieldset>
+                <legend>Documents</legend>
+                <div class="form-group">
+                    <label for="meritfile">Final Merit List Document:</label>
+                    <input type="file" name="meritfile" id="meritfile"><br>
+                    <button  type="submit" value="Submit">Upload</button>
+                </div>
+                <div class="form-group">
+                    <label for="applNo">Application Number:</label>
+                    <input type="text" name="applNo" id="applNo" maxlength="10">
+                </div>
+                <!-- Add other document details here -->
+            </fieldset>
+
+            <!-- Exam Details Section -->
+            <fieldset>
+                <legend>Exam Details</legend>
+                <!-- Add CET and JEE exam details here -->
+                <label for="cetGiven">CET Given? Yes/No:</label>
+                <select id="cetGiven">
+                <option value="">Select One</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                </select>
+
+                <div id="cetDetails" class="hidden">
+                <h3>CET Details</h3>
+                <label for="cetPhysics">Physics Marks:</label>
+                <input type="number" id="cetPhysics" step="any"><br>
+                <label for="cetChemistry">Chemistry Marks:</label>
+                <input type="number" id="cetChemistry" step="any"><br>
+                <label for="cetMathematics">Mathematics Marks:</label>
+                <input type="number" id="cetMathematics" step="any"><br>
+                <label for="cetPercentile">Total Percentile:</label>
+                <input type="number" id="cetPercentile" step="any">
+                </div>
+
+                <label for="jeeGiven">JEE Given? Yes/No:</label>
+                <select id="jeeGiven">
+                <option value="">Select One</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                </select>
+
+                <div id="jeeDetails" class="hidden">
+                <h3>JEE Details</h3>
+                <label for="jeePhysics">Physics Marks:</label>
+                <input type="number" id="jeePhysics" step="any"><br>
+                <label for="jeeChemistry">Chemistry Marks:</label>
+                <input type="number" id="jeeChemistry" step="any"><br>
+                <label for="jeeMathematics">Mathematics Marks:</label>
+                <input type="number" id="jeeMathematics" step="any"><br>
+                <label for="jeePercentile">Total Percentile:</label>
+                <input type="number" id="jeePercentile" step="any">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Merit Details</legend>
+                <label for="mhMerit">MH Merit No.:</label>
+                <input type="number" id="mhMerit"><br>
+                <label for="aiMerit">All India Merit No.:</label>
+                <input type="number" id="aiMerit"><br>
+                
+            </fieldset>
+
+            <!-- Undertaking Section -->
+            <fieldset>
+                <legend>Undertaking by Candidates and Parents</legend>
+                <p>
+                  We have read all the Rules of Admission process and after understanding these rules thoroughly, we have filled in the application form for admission for the AY 2023-24. The information given by us in the application is true to the best of our knowledge and belief. We understood that if any of the statements made by us in the application form or any information supplied by us in connection with the candidate's admission is later on at any time, found to be false or incorrect, candidate's admission will be cancelled, fees forfeited, and candidate may be expelled from the Institute by the Director of the Institute.
+                </p>
+                <!-- <br> -->
+                <div class="ut1">
+                  <label for="agree1">
+                    <input type="checkbox" id="agree1">I Agree
+                  </label>
+                </div>
+                <p>
+                    We have read all the Rules of Admission process and after understanding these rules thoroughly, we have filled in the application form for admission for the AY 2023-24. The information given by us in the application is true to the best of our knowledge and belief. We understood that if any of the statements made by us in the application form or any information supplied by us in connection with the candidate's admission is later on at any time, found to be false or incorrect, candidate's admission will be cancelled, fees forfeited, and candidate may be expelled from the Institute by the Director of the Institute.
+                  </p>
+                <div class="ut2">
+                  <label for="agree2">
+                    <input type="checkbox" id="agree2">I Agree
+                  </label>
+                </div>
+              </fieldset>
+            <div class="submit">
+            <input  type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+    <!-- <script src="{% static 'test.js' %}"></script> Link to your JavaScript file -->
+</body>
+</html>

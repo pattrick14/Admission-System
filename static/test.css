@@ -1,0 +1,125 @@
+/* Import Bootstrap */
+@import url('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
+
+/* Custom Styles */
+body {
+    background-color: #f5f5f5; /* Adjusted background color */
+    font-family: 'Roboto', sans-serif;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 700;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.header h1, .header h2 {
+    color: #333; /* Adjusted heading color */
+}
+
+fieldset {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+legend {
+    font-weight: bold;
+    color: #333; /* Adjusted legend color */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    color: #666; /* Adjusted label color */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="file"],
+input[type="radio"],
+input[type="checkbox"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: #4CAF50; /* Adjusted button background color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049; /* Adjusted button hover background color */
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+/* Style for CET fields */
+#cetDetails {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-weight: 500;
+    color: #333; /* Adjusted heading color */
+}
+
+/* Style for JEE fields */
+#jeeDetails {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.submit{
+    text-align: center;
+}
+
+/* Custom Styles */
+.ut1 label {
+    display: inline-block; /* Display the label inline with the checkbox */
+    vertical-align: middle; /* Align vertically with the checkbox */
+    /* margin-right: 5px; Add some right margin to separate the checkboxes */
+}
+
+.ut1 input[type="checkbox"] {
+    /* display: inline-block; Display the checkbox inline */
+    vertical-align: middle; /* Align vertically with the label */
+    /* margin-right: 5px; Add some right margin to separate the checkboxes */
+}
