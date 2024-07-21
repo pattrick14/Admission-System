@@ -18,10 +18,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from userlogin import views as userlogin_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('form.urls')),
+    # path('signup/', userlogin_views.signup_view, name='signup'),
+    # path('login/', userlogin_views.login_view, name='login'),
+    # path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Student, Parent, Exam, UploadDoc, Merit, Agree
+from .models import Student, Parent, CET_Exam, UploadDoc, Merit, Agree, JEE_Exam
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -11,10 +11,15 @@ class ParentForm(forms.ModelForm):
         model = Parent
         fields = ['pname', 'pnumber']
 
-class ExamForm(forms.ModelForm):
+class CET_ExamForm(forms.ModelForm):
     class Meta:
-        model = Exam
-        fields = ['cetPhysics', 'cetChemistry', 'cetMathematics', 'cetPercentile', 'jeePhysics', 'jeeChemistry', 'jeeMathematics', 'jeePercentile']
+        model = CET_Exam
+        fields = ['cetPhysics', 'cetChemistry', 'cetMathematics', 'cetPercentile']
+
+class JEE_ExamForm(forms.ModelForm):
+    class Meta:
+        model = JEE_Exam
+        fields = ['jeePhysics', 'jeeChemistry', 'jeeMathematics', 'jeePercentile']
 
 class UploadDoc(forms.ModelForm):
     class Meta:

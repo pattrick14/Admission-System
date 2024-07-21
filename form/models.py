@@ -10,11 +10,13 @@ class Parent(models.Model):
     pname = models.CharField(max_length=100)
     pnumber = models.CharField(max_length=15)
 
-class Exam(models.Model):
+class CET_Exam(models.Model):
     cetPhysics = models.CharField(max_length=10)
     cetChemistry = models.CharField(max_length=10)
     cetMathematics = models.CharField(max_length=10)
     cetPercentile = models.CharField(max_length=10)
+
+class JEE_Exam(models.Model):
     jeePhysics = models.CharField(max_length=10)
     jeeChemistry = models.CharField(max_length=10)
     jeeMathematics = models.CharField(max_length=10)

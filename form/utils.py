@@ -116,14 +116,20 @@ def extract_info(text):
         info_dict['CET_Mathematics'] = None
 
     try:
-        info_dict['CET_Total'] = float(re.search(r'Total PCM \| (\d+\.\d+)', text).group(1))
+        info_dict['CET_Total'] = float(re.search(r'Total PCM (\d+\.\d+)', text).group(1))
     except AttributeError:
         info_dict['CET_Total'] = None
 
     try:
-        info_dict['JEE Main Candidate Name'] = re.search(r'Candidate Name \(as per JEE\) \| (.+)', text).group(1)
+        info_dict['JEE Main Candidate Name'] = re.search(r'Candidate Name \(as per JEE\) (.+)', text).group(1)
     except AttributeError:
         info_dict['JEE Main Candidate Name'] = None
+
+    try:
+        if(re.search(r'JEE', text)):
+            info_dict['JEE Present'] = 'JEE Details Present'
+    except AttributeError:
+        info_dict['JEE Present'] = None
 
     try:
         info_dict['JEE_Physics'] = float(re.search(r'Physics\s*[\|\[]?\s*(\d+\.\d+)', text, re.DOTALL).group(1))

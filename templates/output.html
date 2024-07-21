@@ -11,7 +11,13 @@
     <div class="container">
         <h1 class="heading">PVG's College of Engineering & Technology & G.K. Pate (Wani) Institute of Management</h1>
         <h2 class="heading">Merit Form - AY 2024-25</h2>
-        <form method="post" enctype="multipart/form-data" action="{% url 'save_forms' %}">>
+        {% if final %}
+            <h4>"Uploaded document is a Final Merit List document."</h4>
+        {% else %}
+            <h4>"Uploaded document is NOT a Final Merit List document."</h4>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'save_forms' %}">
             {% csrf_token %}
             <fieldset>
                 <legend>Student Details</legend>
@@ -34,7 +40,12 @@
 
             <fieldset>
                 <legend>Exam Details</legend>
-                {{eform.as_p}}
+                {{cetform.as_p}}
+                {% if jee_present %}
+                    {{jeeform.as_p}}
+                {% else %}
+                    "No JEE Detals Present"
+                {% endif %}
             </fieldset>
 
             <fieldset>

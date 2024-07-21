@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 import os
 import pytesseract
-from .forms import StudentForm, ParentForm, ExamForm, MeritForm, AgreeForm 
+from .forms import StudentForm, ParentForm,JEE_ExamForm, CET_ExamForm, MeritForm, AgreeForm 
 from .models import UploadDoc
 from .utils import extract_info, perform_ocr
 import cv2
@@ -50,7 +50,16 @@ def upload_file(request):
         #     'file_path':new_file_path,
         # })
         # dform.save()
+        # Check if the document is a Final Merit List document
+        is_final_merit_list = re.search(r'Final Merit Status|Final Merit List', text)
+        is_provisional = re.search(r'Provisional', text)
+        if is_final_merit_list:
+            print("The document is a Final Merit List document.")
+            final = "The document is a Final Merit List document."
+        if is_provisional:
+            print("The document is not a Final Merit List document.")
 
+        jee_present = info.get('JEE Present', '')
 
         sform = StudentForm(initial={
             'studentname': request.POST.get('studentname'),
@@ -65,33 +74,37 @@ def upload_file(request):
             'pnumber' : request.POST.get('pnumber'),
         })
 
-        eform = ExamForm(initial={
+        cetform = CET_ExamForm(initial={
             'cetPhysics': info.get('CET_Physics', ''),
             'cetChemistry': info.get('CET_Chemistry',''),
             'cetMathematics': info.get('CET_Mathematics', ''),
             'cetPercentile': info.get('CET_Total', ''),
+        })
+
+        jeeform = JEE_ExamForm(initial={
             'jeePhysics' : info.get('JEE_Physics', ''),
             'jeeChemistry': info.get('JEE_Chemistry',''),
             'jeeMathematics': info.get('JEE_Mathematics', ''),
             'jeePercentile': info.get('JEE_Total', ''),
         })
-
         
         mform = MeritForm(initial={
             'mhMerit' : info.get('State General Merit No', ''),
             'aiMerit'  : info.get('All India Merit No', ''),
         })
 
+        
         aform = AgreeForm(initial={
 
         })
-        return render(request, 'output.html', {'sform': sform, 'pform':pform, 'eform':eform, 
+        return render(request, 'output.html', {'final':final, 'sform': sform, 'pform':pform, 'cetform':cetform, 'jeeform':jeeform,
                                                'dform':dform, 'mform':mform, 'aform':aform, 
-                                               'file_path': new_file_path})
+                                               'file_path': new_file_path, 'jee_present':jee_present})
     else:
         sform = StudentForm()
         pform = ParentForm()
-        eform = ExamForm()
+        cetform = CET_ExamForm()
+        jeeform = JEE_ExamForm()
         dform = UploadDoc()
         mform = MeritForm()
         aform = AgreeForm()
@@ -102,19 +115,23 @@ def save_forms(request):
     if request.method == 'POST':
         sform = StudentForm(request.POST)
         pform = ParentForm(request.POST)
-        eform = ExamForm(request.POST)
+        cetform = CET_ExamForm(request.POST)
+        jeeform = JEE_ExamForm(request.POST)
         dform = UploadDoc(request.POST, request.FILES)
         mform = MeritForm(request.POST)
         aform = AgreeForm(request.POST)
 
-        if all([sform.is_valid(), pform.is_valid(), eform.is_valid(), mform.is_valid(), aform.is_valid()]):
+        if all([sform.is_valid(), pform.is_valid(), cetform.is_valid(), jeeform.is_valid(), mform.is_valid(), aform.is_valid()]):
             sform.save()
             pform.save()
-            eform.save()
+            cetform.save()
+            jeeform.save()
             mform.save()
             aform.save()
             return redirect('success_page')  # Redirect to a success page after saving the data
-    return render(request, 'output.html', {'sform': sform, 'pform': pform, 'eform': eform, 'dform': dform, 'mform': mform, 'aform': aform})
+    return render(request, 'output.html', {'sform': sform, 'pform': pform, 
+                                           'cetform':cetform, 'jeeform':jeeform, 
+                                           'dform': dform, 'mform': mform, 'aform': aform})
 
 def success_view(request):
     return render(request, 'success.html')
