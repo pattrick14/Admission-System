@@ -29,6 +29,10 @@
             </fieldset>            
 
             <fieldset>
+                <div class="form-group">
+                    <label for="applNo">Application Number:</label>
+                    <input type="text" name="applNo" id="applNo" value="{{ applNo }}" maxlength="10">
+                </div>
                 <legend>Document</legend>
                 {{dform.as_p}}
                 {% if file_path %}
@@ -63,6 +67,7 @@
                     We are fully aware that if any information mentioned above furnished by us is found INCORRECT due to any reason (intentionally or unintentionally), candidate will have no claim on the seat allotted to him/her in PVG's College of Engineering & Technology and G.K. Pate (Wani) Institute of Management, Pune and that candidate will be completely out of the admission process of ACAP (Spot) Rounds of the Institute.
                 </p><br>
                 {{aform.as_p}}
+                <input type="checkbox" id="agree2">I Agree
             </fieldset>
 
             <input type="submit" value="Submit">

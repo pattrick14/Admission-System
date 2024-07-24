@@ -4,15 +4,25 @@ from django.conf import settings
 import os
 import pytesseract
 from .forms import StudentForm, ParentForm,JEE_ExamForm, CET_ExamForm, MeritForm, AgreeForm 
-from .models import UploadDoc
+from .models import UploadDoc, Student, Application
 from .utils import extract_info, perform_ocr
 import cv2
 import re
+from django.contrib.auth.decorators import login_required
+
 
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
 # Create your views here.
+@login_required
 def upload_file(request):
+    user = request.user
+
+    # Check if the user has already submitted an application
+    if Application.objects.filter(user=user).exists():
+        print("User already present")
+        return redirect('success_page')  # Redirect to a success page if already submitted
+
     if request.method == 'POST' and 'meritfile' in request.FILES:
         uploaded_file = request.FILES['meritfile']
         # file_path = os.path.join(settings.MEDIA_ROOT, uploaded_file.name)
@@ -98,7 +108,7 @@ def upload_file(request):
 
         })
         return render(request, 'output.html', {'final':final, 'sform': sform, 'pform':pform, 'cetform':cetform, 'jeeform':jeeform,
-                                               'dform':dform, 'mform':mform, 'aform':aform, 
+                                               'dform':dform, 'mform':mform, 'aform':aform,  'applNo':applNo,
                                                'file_path': new_file_path, 'jee_present':jee_present})
     else:
         sform = StudentForm()
@@ -111,7 +121,9 @@ def upload_file(request):
 
     return render(request, 'test.html')
 
+@login_required
 def save_forms(request):
+    # user = request.user
     if request.method == 'POST':
         sform = StudentForm(request.POST)
         pform = ParentForm(request.POST)
@@ -128,10 +140,25 @@ def save_forms(request):
             jeeform.save()
             mform.save()
             aform.save()
-            return redirect('success_page')  # Redirect to a success page after saving the data
+        return redirect('success_page')  # Redirect to a success page after saving the data
     return render(request, 'output.html', {'sform': sform, 'pform': pform, 
                                            'cetform':cetform, 'jeeform':jeeform, 
                                            'dform': dform, 'mform': mform, 'aform': aform})
 
+@login_required
 def success_view(request):
+    user = request.user
+
+    if Application.objects.filter(user=user).exists():
+        return render(request, 'success.html')
+    else:
+        Application.objects.create(user=user)
+    # student = Student.objects.get(id=applNo)
+    # print(student)
     return render(request, 'success.html')
+
+# def generate_pdf(request):
+#     student_details = Student.objects.all()
+    
+#     # ... retrieve other data needed for the PDF ...
+#     return render(request, 'pdf_template.pdf', {'student': student})

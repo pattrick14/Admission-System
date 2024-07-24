@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'meritform',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'Pattrick',
         'HOST': 'localhost',
         'PORT': 3306,
     }

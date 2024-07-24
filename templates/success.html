@@ -6,5 +6,9 @@
 <body>
     <h1>Submission Successful</h1>
     <p>Your forms have been successfully submitted.</p>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
 </body>
 </html>
