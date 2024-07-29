@@ -3,6 +3,10 @@ from PIL import Image
 import re, cv2
 import numpy as np
 from pdf2image import convert_from_path
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+
 
 def convtPDF(file_path):
     pdfImage = convert_from_path(file_path)
@@ -116,7 +120,8 @@ def extract_info(text):
         info_dict['CET_Mathematics'] = None
 
     try:
-        info_dict['CET_Total'] = float(re.search(r'Total PCM (\d+\.\d+)', text).group(1))
+        # info_dict['CET_Total'] = float(re.search(r'Total PCM (\d+\.\d+)', text).group(1))
+        info_dict['CET_Total'] = float(re.search(r'Total PCM \| (\d+\.\d+)', text).group(1))
     except AttributeError:
         info_dict['CET_Total'] = None
 
@@ -152,3 +157,25 @@ def extract_info(text):
         info_dict['JEE_Total'] = None
     
     return info_dict
+
+def fill_template(template_path, output_path, text_data, coordinates, font_name="Times-Roman", font_size=30):
+    # Create a canvas object with the size of the PDF
+    c = canvas.Canvas(output_path, pagesize=(1860, 2630))  # Adjusted to match template size
+
+    # Draw the template PDF
+    c.drawImage(template_path, 0, 0, width=1860, height=2630)  # Full size of the template
+
+    page_height = 2630  # Total height of the page in points
+
+    # Set font and font size
+    c.setFont(font_name, font_size)
+
+    # Fill the text data at specified coordinates
+    for text, (x, y) in zip(text_data, coordinates):
+        adjusted_x = x * (72 / 96)  # Adjust x coordinate
+        adjusted_y = page_height - (y * (72 / 96))  # Adjust y coordinate for top-down filling
+        c.drawString(adjusted_x, adjusted_y, text)
+
+    # Save the filled PDF
+    c.save()
+    

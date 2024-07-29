@@ -6,8 +6,10 @@
 <body>
     <h1>Submission Successful</h1>
     <p>Your forms have been successfully submitted.</p>
+    <h4>Here is your Application form: <a href="{{output_path}}">Downlaod FORM</a> </h4>
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
+        
         <button type="submit">Logout</button>
       </form>
 </body>

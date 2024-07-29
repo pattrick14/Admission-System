@@ -1,15 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Sign Up</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Student Registration</title>
+    
+<style>
+    body {
+        display: flex;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background-color: #f5f5f5;
+        align-items: center;
+        justify-content: center;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 1000px;
+    }
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        background-color: #f0f7fc;
+        border-radius: 5px;
+    }
+    .heading {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .input-field {
+        margin-bottom: 15px;
+        width: 100%;
+    }
+    .input-field label {
+        display: block;
+        margin-bottom: 5px;
+        color: #666;
+    }
+    .input-field input {
+        padding: 10px;
+        outline: none;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+    }
+    .input-field input:focus {
+        border-color: #4CAF50;
+    }
+    .button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .button:hover {
+        background-color: #45a049;
+    }
+    .small-text {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-0%);
+        font-size: 12px;
+        color: #aaa;
+    }
+</style>
+
 </head>
 <body>
-    <h2>Sign Up</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Sign Up</button>
-    </form>
-    <a href="{% url 'login' %}">Already have an account? Login here.</a>
+    <div class="container">
+            <div class="col-md-6 form-container">
+                <h1 class="heading">PVG's College of Engineering & Technology & G.K. Pate (Wani) Institute of Management, Pune</h1>
+                <div class="instructions">
+                    <p><b>Instructions at time of registration</b></p>
+                    <p>The Username that you use for registration will be your username for this Portal. All communications from the College will be sent to email address and mobile number submitted in the user registration process. You will not be able to change mobile number and email ID once registration is complete.</p>
+                    <p>You will receive an OTP on your email to activate your account, which will expire after 30 minutes.</p>
+                    <p>After registration, your account will be activated, and you will receive an email confirmation.</p>
+                    <p>A student can apply to more than one course. However, he/she has to fill a separate merit form for each course. Only one merit form can be filled for a course.</p>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="input-field">
+                        <label for="name">User Name</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="input-field">
+                        <label for="email">Email Address</label>
+                        {{ form.email}}
+                    </div>
+                    <div class="input-field">
+                        <label for="password">Create Password</label>
+                        {{ form.password1}}
+                    </div>
+                    <ul>
+                        <li>Your password can't be too similar to your other personal information.</li>
+                        <li>Your password must contain at least 8 characters.</li>
+                        <li>Your password can't be a commonly used password.</li>
+                        <li>Your password can't be entirely numeric.</li>
+                    </ul>
+                    <div class="input-field">
+                        <label for="confirm_password">Confirm Password</label>
+                        {{ form.password2}}
+                    </div>
+                    <div style="text-align: center;">
+                        <button type="submit" class="button">Register Now</button>
+                    </div>
+                    <a href="{% url 'login' %}">Already have an account? Login here.</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="small-text">Copyright AndroJet Academy 2024. All Rights Reserved.</div>
 </body>
 </html>

@@ -1,15 +1,24 @@
 from django import forms
-from .models import Student, Parent, CET_Exam, UploadDoc, Merit, Agree, JEE_Exam
+from .models import Student, CET_Exam, UploadDoc, JEE_Exam, Application
+
+# class ApplicationForm(forms.ModelForm):
+#     class Meta:
+#         model = Application
+#         fields = ['student', 'cet_exam', 'jee_exam', 'upload_doc']
 
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['studentname', 'email', 'mobile', 'address', ]
-        
-class ParentForm(forms.ModelForm):
-    class Meta:
-        model = Parent
-        fields = ['pname', 'pnumber']
+        fields = ['studentname', 'email', 'mobile', 'address','pname', 'pnumber',
+                  'mhMerit', 'aiMerit', 'agreed'
+                  ]
+        widgets={
+            'agreed':forms.CheckboxInput(attrs={'required':True}),
+        }
+        def __init__(self, *args, **kwargs):
+            super(StudentForm, self).__init__(*args, **kwargs)
+            for field in self.fields.values():
+                field.required = True #Sets all fields as required
 
 class CET_ExamForm(forms.ModelForm):
     class Meta:
@@ -26,13 +35,8 @@ class UploadDoc(forms.ModelForm):
         model = UploadDoc
         fields = ['applNo', 'meritfile']
 
-class MeritForm(forms.ModelForm):
+class ApplicationForm(forms.ModelForm):
     class Meta:
-        model = Merit
-        fields = ['mhMerit', 'aiMerit']
-
-class AgreeForm(forms.ModelForm):
-    class Meta:
-        model = Agree
-        fields = []  # Add any fields if necessary
+        model = Application
+        fields = ['user']
 

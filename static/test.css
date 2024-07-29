@@ -27,9 +27,9 @@ body {
     margin-bottom: 20px;
 }
 
-.hidden {
-    display: none;
-}
+/* .hidden {
+    /* display: none; */
+/* }  */
 
 .header h1, .header h2 {
     color: #333; /* Adjusted heading color */

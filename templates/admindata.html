@@ -1,0 +1,23 @@
+{% block content %}
+    <h1>Student Data</h1>
+    <p>Total Students: {{ applications.count }}</p>
+    <a href="{% url 'export_data' %}">Download Excel File</a>
+    <table>
+        <tr>
+            <th>Student Name</th>
+            <th>Email</th>
+            <th>Mobile</th>
+            <th>Address</th>
+            <!-- Add other fields as needed -->
+        </tr>
+        {% for application in applications %}
+        <tr>
+            <td>{{ application.student.studentname }}</td>
+            <td>{{ application.student.email }}</td>
+            <td>{{ application.student.mobile }}</td>
+            <td>{{ application.student.address }}</td>
+            <!-- Add other fields as needed -->
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

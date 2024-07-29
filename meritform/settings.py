@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-oc*&_7+xmg-j1ti!wj#8((*9i2zqgtylva#hq5jbr#@vy69s_2'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'meritform',
         'USER': 'root',
-        'PASSWORD': 'Pattrick',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': 3306,
     }
