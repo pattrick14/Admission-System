@@ -1,0 +1,9 @@
+pytesseract==0.3.8         # OCR library
+Pillow==9.1.0              # Image processing
+opencv-python==4.5.5.64    # OpenCV
+numpy==1.21.4              # Scientific computing
+pdf2image==1.16.0          # PDF to image converter
+reportlab==3.6.2           # PDF generation
+Django==4.0                # Web framework
+psycopg2==2.9.5            # PostgreSQL adapter
+psycopg2-binary==2.9.5     # PostgreSQL adapter (binary distribution)

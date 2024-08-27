@@ -1,6 +1,6 @@
 import pytesseract
 from PIL import Image
-import re, cv2
+import re, cv2, os
 import numpy as np
 from pdf2image import convert_from_path
 from reportlab.lib.pagesizes import letter
@@ -59,7 +59,18 @@ def perform_ocr(image_path):
             # processedImg = preprocessing(pdfImage[0])
             # Perform OCR using Tesseract
             text = pytesseract.image_to_string(pdfImage[0])
+            # return text
+            # Construct the image file path
+            image_file_path = pdfImage[0].filename
+            # Delete the processed image from local storage
+            if os.path.exists(image_file_path):
+                os.remove(image_file_path)
+                print(f"Deleted temporary image file: {image_file_path}")
+            else:
+                print(f"File not found: {image_file_path}")
+
             return text
+
     except Exception as e:
         print(f"Error during OCR: {e}")
         return ""

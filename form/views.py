@@ -10,9 +10,12 @@ import csv
 import re
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.storage import default_storage
 
-
-pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
+if os.name == 'nt':  # For Windows
+    pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+else:  # For Linux (Ubuntu)
+    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
 # Create your views here.
 @login_required
@@ -28,18 +31,29 @@ def upload_file(request):
         uploaded_file = request.FILES['meritfile']
         # file_path = os.path.join(settings.MEDIA_ROOT, uploaded_file.name)
         file_name = uploaded_file.name
-        file_path = os.path.join(settings.MEDIA_ROOT, file_name)  # Construct the absolute file path
+        # file_path = os.path.join(settings.MEDIA_ROOT, file_name)  # Construct the absolute file path
         
         # Create an Application instance and save it
         application = Application(user=user)
         application.save()
 
-        with open(file_path, 'wb+') as destination:
-            for chunk in uploaded_file.chunks():
-                destination.write(chunk)
+         # Save file to S3 instead of local storage
+        file_name_in_s3 = default_storage.save(file_name, uploaded_file)
+        file_url = default_storage.url(file_name_in_s3)
+
+        # You can download the file for local processing if needed
+        local_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        with default_storage.open(file_name_in_s3, 'rb') as s3_file:
+            with open(local_file_path, 'wb+') as local_file:
+                for chunk in s3_file.chunks():
+                    local_file.write(chunk)
+
+        # with open(file_path, 'wb+') as destination:
+        #     for chunk in uploaded_file.chunks():
+        #         destination.write(chunk)
 
         # text = pytesseract.image_to_string(cv2.imread(file_path))
-        text = perform_ocr(file_path)
+        text = perform_ocr(local_file_path)
         # Function to extract information from OCR output
         info = extract_info(text)
         print(info) #find the error
@@ -47,15 +61,30 @@ def upload_file(request):
         applNo = info.get('ApplicationID', '')
 
         # Save the file with the application number as the filename
+        # new_file_name = f"{applNo}.pdf"
+        # new_file_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
+        # os.rename(file_path, new_file_path)  # Rename the file
+
+         # Rename the file in S3 with the application number
         new_file_name = f"{applNo}.pdf"
-        new_file_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
-        os.rename(file_path, new_file_path)  # Rename the file
+        new_file_name_in_s3 = f"{new_file_name}"
+        new_file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{new_file_name}"
+
+         # Save the renamed file to S3
+        with open(local_file_path, 'rb') as local_file:
+            default_storage.save(new_file_name_in_s3, local_file)
+
+        # Optionally, delete the old file from S3
+        default_storage.delete(file_name_in_s3)
+
+        # Ensure the local file is properly closed before attempting to delete it
+        os.remove(local_file_path)
 
         dform = UploadDoc.objects.create(
             application=application,
             applNo=applNo,
             meritfile=new_file_name,
-            file_path=new_file_path
+            file_path=new_file_url
         )
         dform.save()
 
@@ -101,7 +130,7 @@ def upload_file(request):
         })
         
         return render(request, 'output.html', {'application':application, 'final':final, 'sform': sform, 'cetform':cetform, 'jeeform':jeeform,
-                                               'dform':dform, 'file_path': new_file_path, 'jee_present':jee_present})
+                                               'dform':dform, 'file_path': new_file_url, 'jee_present':jee_present})
     else:
         sform = StudentForm()
         cetform = CET_ExamForm()
@@ -142,13 +171,24 @@ def success_view(request):
     user = request.user
     
     if Application.objects.filter(user=user).exists():
-        output_path = generate_pdf(user)
-        return render(request, 'success.html', {'output_path':output_path})
+        application = Application.objects.get(user=user)
+        output_filename = f"filled_{application.uploaddoc.applNo}.pdf"  # Ensure uploaddoc is related to Application
+        s3_file_name = f"filled_forms/{output_filename}"
+        
+        # Check if the PDF already exists in S3
+        if default_storage.exists(s3_file_name):
+            # If the file exists, get the URL
+            s3_pdf_url = default_storage.url(s3_file_name)
+        else:
+            # If the file does not exist, generate a new PDF
+            s3_pdf_url = generate_pdf(user)
+        
+        return render(request, 'success.html', {'output_path': s3_pdf_url})
     else:
         print("NooNOO")
         Application.objects.create(user=user)
-        output_path = generate_pdf(user)
-        return render(request, 'success.html', {'output_path':output_path})
+        s3_pdf_url = generate_pdf(user)
+        return render(request, 'success.html', {'output_path':s3_pdf_url})
 
 
 def export_data(request):
@@ -189,6 +229,9 @@ def export_data(request):
         except ObjectDoesNotExist:
             jee_exam = None
 
+        # Generate the URL for the uploaded merit file
+        merit_file_url = default_storage.url(upload_doc.meritfile.name)
+
         writer.writerow([
             application.id,
             student.studentname,
@@ -209,49 +252,12 @@ def export_data(request):
             jee_exam.jeeMathematics if jee_exam else "Null",
             jee_exam.jeePercentile if jee_exam else "Null",
             upload_doc.applNo,
-            upload_doc.meritfile
+            merit_file_url
         ])
 
     return response
 
 
-# def export_data(request):
-#     applications = Application.objects.all()
-#     data = []
-#     for application in applications:
-#         student = application.student
-#         cet_exam = application.cet_exam
-#         jee_exam = application.jee_exam
-#         upload_doc = application.upload_doc
-        
-#         row = {
-#             'Student Name': student.studentname,
-#             'Email': student.email,
-#             'Mobile': student.mobile,
-#             'Address': student.address,
-#             'Parent Name': student.pname,
-#             'Parent Number': student.pnumber,
-#             'MH Merit': student.mhMerit,
-#             'AI Merit': student.aiMerit,
-#             'Agreed': student.agreed,
-#             'CET Physics': cet_exam.cetPhysics,
-#             'CET Chemistry': cet_exam.cetChemistry,
-#             'CET Mathematics': cet_exam.cetMathematics,
-#             'CET Percentile': cet_exam.cetPercentile,
-#             'JEE Physics': jee_exam.jeePhysics,
-#             'JEE Chemistry': jee_exam.jeeChemistry,
-#             'JEE Mathematics': jee_exam.jeeMathematics,
-#             'JEE Percentile': jee_exam.jeePercentile,
-#             'Application Number': upload_doc.applNo,
-#             'Merit File': upload_doc.meritfile,
-#         }
-#         data.append(row)
-    
-#     df = pd.DataFrame(data)
-#     response = HttpResponse(content_type='application/ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename="student_data.xlsx"'
-#     df.to_excel(response, index=False)
-#     return response
 
 def generate_pdf(user):
     """
@@ -322,7 +328,9 @@ def generate_pdf(user):
         # Define font and font size
         font_name = "Times-Roman"
         font_size = 30
-        output_path=r"media/" + f"filled_{upload_doc.applNo}.pdf"
+        # Generate the output path for the local file
+        output_filename = f"filled_{upload_doc.applNo}.pdf"
+        output_path = os.path.join(settings.MEDIA_ROOT, output_filename)
 
         # Fill the PDF template
         fill_template(
@@ -333,7 +341,21 @@ def generate_pdf(user):
             font_name=font_name,
             font_size=font_size,
             )
-        return output_path
+        
+          # Upload the filled PDF to S3
+        with open(output_path, 'rb') as pdf_file:
+            s3_file_name = f"filled_forms/{output_filename}"  # You can customize the S3 path
+            s3_file_url = default_storage.save(s3_file_name, pdf_file)
+
+        # Get the URL for the uploaded PDF
+        s3_file_url = default_storage.url(s3_file_name)
+
+        print(s3_file_url)
+        # Optionally, delete the local file after uploading to S3
+        os.remove(output_path)
+
+        return s3_file_url
+        # return output_path
         # # Serve the PDF file for download
         # with open(output_path, 'rb') as pdf_file:
         #     response = HttpResponse(pdf_file.read(), content_type='application/pdf')
