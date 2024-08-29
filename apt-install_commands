@@ -1,0 +1,17 @@
+
+  868  python3 -m venv fenv
+  869  source fenv/bin/activate
+  
+  873  python3 manage.py runserver
+ 
+  878  sudo apt install pkg-config
+  880  pip install mysqlclient
+
+  890  sudo apt-get update
+  891  sudo apt-get install -y poppler-utils tesseract-ocr tesseract-ocr-eng
+
+  902  sudo apt-get update
+  903  sudo apt-get install -y tesseract-ocr tesseract-ocr-eng
+
+  905  python3 manage.py runserver
+

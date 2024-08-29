@@ -143,7 +143,8 @@ LOGIN_REDIRECT_URL = '/'
 # Redirect to login page if not authenticated
 LOGIN_URL = '/'
 
-
+AWS_ACCESS_KEY_ID = 'AKIASLG2QDTODPFCDQD3'
+AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'djangoproject1'
 AWS_S3_SIGNATURE_NAME = 's3v4',
 AWS_S3_REGION_NAME = 'us-east-1'
