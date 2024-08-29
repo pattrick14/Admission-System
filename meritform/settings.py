@@ -76,16 +76,16 @@ WSGI_APPLICATION = 'meritform.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'meritform',
-#         'USER': 'admin',
-#         'PASSWORD': 'Pattrick',
-#         'HOST': 'django-meritform.cvs0y6mqsjss.us-east-1.rds.amazonaws.com',
-#         'PORT': 3306,
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'meritform1',
+        'USER': 'admin',
+        'PASSWORD': 'Pattrick',
+        'HOST': 'django-meritform.cvs0y6mqsjss.us-east-1.rds.amazonaws.com',
+        'PORT': 3306,
+    }
+}
 
 
 # Password validation
@@ -140,23 +140,39 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 
-
 # Redirect to login page if not authenticated
 LOGIN_URL = '/'
 
 
+AWS_STORAGE_BUCKET_NAME = 'djangoproject1'
+AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
+# s3 static settings
+STATIC_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# s3 public media settings
+PUBLIC_MEDIA_LOCATION = 'media'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
 
 # S3 static files configuration
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# S3 media files configuration
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# # S3 media files configuration
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Other settings
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')

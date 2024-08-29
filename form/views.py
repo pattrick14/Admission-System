@@ -36,24 +36,62 @@ def upload_file(request):
         # Create an Application instance and save it
         application = Application(user=user)
         application.save()
-
-         # Save file to S3 instead of local storage
-        file_name_in_s3 = default_storage.save(file_name, uploaded_file)
-        file_url = default_storage.url(file_name_in_s3)
-
-        # You can download the file for local processing if needed
+        
+        # Save the file locally with its original uploaded name
         local_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        with default_storage.open(file_name_in_s3, 'rb') as s3_file:
-            with open(local_file_path, 'wb+') as local_file:
-                for chunk in s3_file.chunks():
-                    local_file.write(chunk)
+        with open(local_file_path, 'wb+') as local_file:
+            for chunk in uploaded_file.chunks():
+                local_file.write(chunk)
 
-        # with open(file_path, 'wb+') as destination:
-        #     for chunk in uploaded_file.chunks():
-        #         destination.write(chunk)
+
+        # Perform OCR on the locally saved file
+        text, image_file_path = perform_ocr(local_file_path)
+
+        # Extract information from the OCR output
+        info = extract_info(text)
+        # print(info)  # Debugging: Print extracted information
+
+        # Extract application number from the extracted info
+        applNo = info.get('ApplicationID', '')
+
+        # Rename the local file based on the extracted application number
+        if applNo:
+            new_file_name = f"{applNo}.pdf"
+            new_local_file_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
+            os.rename(local_file_path, new_local_file_path)
+
+        # Upload the renamed file to S3
+        with open(new_local_file_path, 'rb') as local_file:
+            file_name_in_s3 = default_storage.save(new_file_name, local_file)
+            new_file_url = default_storage.url(file_name_in_s3)
+
+        # Delete the local file after uploading to S3
+        if os.path.exists(new_local_file_path):
+            os.remove(new_local_file_path)
+        # Delete the processed image from local storage
+        if os.path.exists(image_file_path):
+            os.remove(image_file_path)
+            print(f"Deleted temporary image file: {image_file_path}")
+        else:
+            print(f"File not found: {image_file_path}")
+        #  # Save file to S3 instead of local storage
+        # file_name_in_s3 = default_storage.save(file_name, uploaded_file)
+        # file_url = default_storage.url(file_name_in_s3)
+
+        # # You can download the file for local processing if needed
+        # local_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        # with default_storage.open(file_name_in_s3, 'rb') as s3_file:
+        #     with open(local_file_path, 'wb+') as local_file:
+        #         for chunk in s3_file.chunks():
+        #             local_file.write(chunk)
+
+        # # with open(file_path, 'wb+') as destination:
+        # #     for chunk in uploaded_file.chunks():
+        # #         destination.write(chunk)
 
         # text = pytesseract.image_to_string(cv2.imread(file_path))
-        text = perform_ocr(local_file_path)
+        # text = perform_ocr(local_file_path)
+        # print(text)
         # Function to extract information from OCR output
         info = extract_info(text)
         print(info) #find the error
@@ -65,20 +103,20 @@ def upload_file(request):
         # new_file_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
         # os.rename(file_path, new_file_path)  # Rename the file
 
-         # Rename the file in S3 with the application number
-        new_file_name = f"{applNo}.pdf"
-        new_file_name_in_s3 = f"{new_file_name}"
-        new_file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{new_file_name}"
+        #  # Rename the file in S3 with the application number
+        # new_file_name = f"{applNo}.pdf"
+        # new_file_name_in_s3 = f"{new_file_name}"
+        # new_file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{new_file_name}"
 
-         # Save the renamed file to S3
-        with open(local_file_path, 'rb') as local_file:
-            default_storage.save(new_file_name_in_s3, local_file)
+        #  # Save the renamed file to S3
+        # with open(local_file_path, 'rb') as local_file:
+        #     default_storage.save(new_file_name_in_s3, local_file)
 
-        # Optionally, delete the old file from S3
-        default_storage.delete(file_name_in_s3)
+        # # Optionally, delete the old file from S3
+        # # default_storage.delete(file_name_in_s3)
 
-        # Ensure the local file is properly closed before attempting to delete it
-        os.remove(local_file_path)
+        # # Ensure the local file is properly closed before attempting to delete it
+        # # os.remove(local_file_path)
 
         dform = UploadDoc.objects.create(
             application=application,
@@ -101,6 +139,8 @@ def upload_file(request):
 
         sform = StudentForm(initial={
             'studentname': request.POST.get('studentname'),
+            'gender': request.POST.get('gender'),
+            'category': info.get('Category'),
             'email': request.POST.get('email'),
             'mobile': request.POST.get('mobile'),
             'address': request.POST.get('address'),
@@ -199,6 +239,8 @@ def export_data(request):
     writer.writerow([
         'Application ID',
         'Student Name',
+        'Gender',
+        'Category',
         'Email',
         'Mobile',
         'Address',
@@ -235,6 +277,8 @@ def export_data(request):
         writer.writerow([
             application.id,
             student.studentname,
+            student.gender,
+            student.category,
             student.email,
             student.mobile,
             student.address,
@@ -283,6 +327,8 @@ def generate_pdf(user):
         # Prepare the context with the fetched data
         text_data = [
             student.studentname,
+            student.gender,
+            student.category,
             student.email,
             student.mobile,
             student.address,
@@ -305,6 +351,8 @@ def generate_pdf(user):
 
         coordinates = [
             (560, 838),  # name
+            (560, 910),  #gender
+            (560, 1004), #category
             (560, 1078),  # email
             (560, 1150),  # mobile
             (1845, 1002),  # address

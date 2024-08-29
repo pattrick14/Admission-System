@@ -20,6 +20,8 @@ class UploadDoc(models.Model):
 class Student(models.Model):
     application = models.OneToOneField(Application, on_delete=models.CASCADE)
     studentname = models.CharField(max_length=100)
+    gender = models.CharField(max_length=50, null=True, blank=True)
+    category = models.CharField(max_length=50, null=True, blank=True)
     email = models.EmailField()
     mobile = models.CharField(max_length=15)
     address = models.CharField(max_length=500)

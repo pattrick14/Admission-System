@@ -9,7 +9,7 @@ from .models import Student, CET_Exam, UploadDoc, JEE_Exam, Application
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['studentname', 'email', 'mobile', 'address','pname', 'pnumber',
+        fields = ['studentname','gender', 'category', 'email', 'mobile', 'address','pname', 'pnumber',
                   'mhMerit', 'aiMerit', 'agreed'
                   ]
         widgets={
