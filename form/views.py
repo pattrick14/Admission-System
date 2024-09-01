@@ -58,6 +58,7 @@ def upload_file(request):
         if applNo:
             new_file_name = f"{applNo}.pdf"
             new_local_file_path = os.path.join(settings.MEDIA_ROOT, new_file_name)
+            
             os.rename(local_file_path, new_local_file_path)
 
         # Upload the renamed file to S3
@@ -93,10 +94,10 @@ def upload_file(request):
         # text = perform_ocr(local_file_path)
         # print(text)
         # Function to extract information from OCR output
-        info = extract_info(text)
-        print(info) #find the error
+        # info = extract_info(text)
+        # print(info) #find the error
         
-        applNo = info.get('ApplicationID', '')
+        # applNo = info.get('ApplicationID', '')
 
         # Save the file with the application number as the filename
         # new_file_name = f"{applNo}.pdf"

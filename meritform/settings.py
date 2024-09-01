@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-oc*&_7+xmg-j1ti!wj#8((*9i2zqgtylva#hq5jbr#@vy69s_2'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,9 +79,9 @@ WSGI_APPLICATION = 'meritform.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'meritform1',
+        'NAME': 'meritform',
         'USER': 'admin',
-        'PASSWORD': 'Pattrick',
+        'PASSWORD': '',
         'HOST': 'django-meritform.cvs0y6mqsjss.us-east-1.rds.amazonaws.com',
         'PORT': 3306,
     }
@@ -142,18 +142,16 @@ LOGIN_REDIRECT_URL = '/'
 
 # Redirect to login page if not authenticated
 LOGIN_URL = '/'
-
-
-AWS_STORAGE_BUCKET_NAME = 'djangoproject1'
-AWS_S3_SIGNATURE_NAME = 's3v4',
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+AWS_STORAGE_BUCKET_NAME = ''
+AWS_S3_SIGNATURE_NAME = 's3v4'
 AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 AWS_S3_VERITY = True
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 # s3 static settings
 STATIC_LOCATION = 'static'

@@ -65,7 +65,7 @@ def perform_ocr(image_path):
             return text, image_file_path
         # Delete the processed image from local storage
             # if os.path.exists(image_file_path):
-            #     os.remove(image_file_path)
+            #     os.remove(image_filie_path)
             #     print(f"Deleted temporary image file: {image_file_path}")
             # else:
             #     print(f"File not found: {image_file_path}")
